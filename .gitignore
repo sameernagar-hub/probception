@@ -1,0 +1,45 @@
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+.next/
+
+# Run artifacts — traces and reports are reproducible, don't version them
+runs/
+*.log
+
+# Data — large scientific files stay out of git
+data/*
+!data/.gitkeep
+!data/README.md
+*.h5
+*.pt
+*.ckpt
+*.npz
+*.fasta.gz
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
