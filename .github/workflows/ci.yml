@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # The team is split across macOS and Windows, so both must stay green.
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12"]
+        include:
+          - os: ubuntu-latest
+            python: "3.11"
+          - os: ubuntu-latest
+            python: "3.13"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --extra dev --python ${{ matrix.python }}
+
+      - name: Lint
+        run: uv run ruff check src tests scripts
+
+      - name: Test
+        run: uv run pytest -q
+
+      # The demo must work on a clean machine with no credentials. If this step
+      # ever fails, a new teammate cannot get started — treat it as urgent.
+      - name: Demo runs with zero credentials
+        run: uv run probception demo --steps 2
+
+      # The headline claim, enforced. `counterfactual` exits non-zero when the
+      # agent proposes the same next experiment regardless of the results.
+      - name: Closed-loop proof
+        run: uv run probception counterfactual --steps 3

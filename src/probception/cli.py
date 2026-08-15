@@ -23,6 +23,7 @@ from probception import __version__
 from probception.adapters import get_lab, get_searcher
 from probception.agents.llm import Claude
 from probception.agents.scientist import HeuristicScientist, LLMScientist, Scientist
+from probception.clinical import score_asset, write_risk_report
 from probception.config import settings
 from probception.eval.calibration import score_run
 from probception.eval.counterfactual import World, run_counterfactual
@@ -238,6 +239,44 @@ def ask(
     console.print(f"ledger:    [cyan]{loop.ledger.path}[/cyan]")
     console.print(f"inspector: [cyan]{report}[/cyan]  (open this in a browser)")
     console.print(f"run id:    [bold]{loop.run_id}[/bold]")
+
+
+@app.command("risk-profile")
+def risk_profile(
+    asset: str = typer.Argument(..., help="Clinical asset, e.g. 'VERVE-102 PCSK9 GalNAc-LNP'."),
+    trial_design: str = typer.Argument(
+        ..., help="Planned trial design: population, phase, dose plan, endpoints."
+    ),
+    output_json: bool = typer.Option(False, "--json", help="Print the full JSON profile."),
+) -> None:
+    """Score an in vivo CRISPR clinical asset for safety, efficacy, and success risk."""
+    profile = score_asset(asset, trial_design)
+    report = write_risk_report(profile, settings.run_dir)
+
+    table = Table(title="Clinical Asset Risk Profile", title_justify="left")
+    table.add_column("Metric")
+    table.add_column("Score", justify="right")
+    table.add_column("Interpretation", overflow="fold")
+    table.add_row("Success", f"{profile.success_score:.1f}", profile.status)
+    table.add_row("Risk", f"{profile.risk_score:.1f}", "lower is better")
+    table.add_row("Safety", f"{profile.safety_score:.1f}", "cell/animal/human weighted")
+    table.add_row("Efficacy", f"{profile.efficacy_score:.1f}", "cell/animal/human weighted")
+    table.add_row("Confidence", f"{profile.confidence:.2f}", "evidence maturity")
+    table.add_row("FDA approval", f"{profile.fda_approval_score:.1f}", "proxy score")
+    table.add_row("Commercial", f"{profile.commercial_success_score:.1f}", "proxy score")
+    console.print(table)
+
+    console.print(
+        Panel(
+            "\n".join(profile.reasoning + ["", "Next data:", *profile.next_data_to_collect[:3]]),
+            title=f"Reasoning: {profile.generated_from}",
+            border_style="cyan",
+        )
+    )
+    console.print(f"report: [cyan]{report}[/cyan]")
+    console.print(f"json:   [cyan]{report.with_name('risk_profile.json')}[/cyan]")
+    if output_json:
+        console.print_json(profile.model_dump_json())
 
 
 @app.command()
