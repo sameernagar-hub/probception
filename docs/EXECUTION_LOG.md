@@ -15,6 +15,42 @@ so they can be referenced from PRs and from the demo.
 
 ## Day 1 — Saturday, 15 August 2026
 
+### 14:25 · Phase 2 sheet memory and MCP loop added · Codex
+
+Fetched the public Phase 1 Google Sheet through the `gviz` CSV endpoint and
+normalized it into 12 FDA review-domain rows. Added Phase 2 memory records,
+Atlas/vector-search support with deterministic JSONL fallback, and new MCP
+tools for importing the sheet, gathering clinical asset evidence, upserting
+source records, and returning compact asset context.
+The asset evidence tool also records `fetch_strategy` memory for Paperclip
+trial, FDA, PMC, arXiv, bioRxiv, medRxiv, and OpenAlex-style searches so later
+agents can refine source-specific queries with stable hints without changing
+deterministic scoring.
+
+**Decision.** Memory is a retrieval/cache layer only. It labels sources and
+reduces repeated fetches; it does not score assets, rank experiments, update
+beliefs, or set outcome labels.
+
+**Shipped:**
+- `probception ingest-phase1`
+- `data/phase1_regulatory_review_map.csv`
+- `data/phase1_regulatory_review_map.json`
+- `docs/PHASE2_MEMORY.md`
+- Paperclip MCP tools: `import_phase1_sheet_rows`,
+  `collect_clinical_asset_evidence`, `memory_search_evidence`,
+  `memory_upsert_evidence`, `memory_get_asset_context`
+
+**Verified:**
+```
+uv run probception ingest-phase1 --no-memory  -> 12 rows, 12 memory records
+uv run probception ingest-phase1              -> 12 Atlas upserts
+uv run ruff check src tests scripts           -> clean
+MCP collect_clinical_asset_evidence smoke    -> 7 Paperclip routes, 16 memory records
+uv run pytest                                 -> 45 passed
+```
+
+---
+
 ### 13:45 · Teammate evidence map fetched and linked · Codex
 
 Fetched new `origin/main` commit `04f98cf`, which added

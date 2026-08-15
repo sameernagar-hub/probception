@@ -22,6 +22,13 @@ Design *decisions* and their rationale live in
   NTLA-2001.
 - Local Paperclip MCP bridge at `scripts/paperclip_mcp.py`, exposing
   `paperclip_search`, `gather_crispr_trial_data`, and `score_clinical_asset`.
+- Phase 2 sheet ingestion with `probception ingest-phase1`, including normalized
+  CSV/JSON outputs for the 12 FDA review-domain rows.
+- Atlas-backed agent memory with deterministic JSONL fallback and hash-based
+  embeddings for local retrieval when Atlas/vector search is unavailable.
+- Additional Paperclip MCP tools for Phase 1 sheet import, clinical asset
+  evidence gathering, memory upserts, memory search, and compact asset context.
+- Tamarind hosted-job adapter with deterministic outcome containment.
 - `.mcp.example.json` with both the hosted Paperclip MCP and the local
   Probception bridge.
 - Resilient live adapter wrappers. Paperclip/Proto failures degrade to
@@ -32,7 +39,10 @@ Design *decisions* and their rationale live in
 - Paperclip adapter now tries the official Python SDK, then the CLI, then direct
   HTTP with `X-API-Key`.
 - README, setup, integration, clinical workflow, and execution-log docs now
-  describe the finalized clinical derisking direction and fallback behavior.
+  describe the finalized clinical derisking direction, Phase 2 memory loop, and
+  fallback behavior.
+- Removed `docs/COORDINATION.md`; Phase 2 coordination now lives in source
+  labels, memory records, and the execution log.
 
 ### To come
 - Science-team manual review of the seed clinical asset data

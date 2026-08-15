@@ -130,6 +130,17 @@ On macOS/Linux, replace the PowerShell backtick with `\`. This command writes a
 responsive HTML report under `runs/<risk-id>/risk_report.html` and works even
 with no live integrations configured.
 
+Import the Phase 1 review sheet for Phase 2 memory:
+
+```bash
+uv run probception ingest-phase1
+```
+
+By default this writes normalized copies under `data/` and stores compact
+domain records in MongoDB Atlas if `MONGODB_URI` is configured. If Atlas is not
+available, it falls back to local deterministic JSONL memory under
+`.probception_memory/`.
+
 ---
 
 ## 5. Run the tests
@@ -139,7 +150,7 @@ uv run pytest
 uv run ruff check src tests
 ```
 
-39 tests, all green, in a few seconds. If they pass, you can start writing
+Run count can change as the project grows. If they pass, you can start writing
 code with confidence that you'll know when you break something.
 
 ---
@@ -174,6 +185,10 @@ To switch from mock adapters to live ones:
 ```bash
 PROBCEPTION_MODE=live
 ```
+
+For Phase 2 memory, either fill `MONGODB_URI` in `.env` or put an
+`atlas-credentials.env` file next to the repo or in `~/Downloads/`. The loader
+uses it without committing secrets.
 
 Live mode is intentionally resilient. If Paperclip, Proto, Modal, Tamarind, or
 another partner tool fails, Probception falls back to deterministic local

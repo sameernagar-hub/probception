@@ -28,6 +28,7 @@ from probception.config import settings
 from probception.eval.calibration import score_run
 from probception.eval.counterfactual import World, run_counterfactual
 from probception.loop import ClosedLoop
+from probception.phase2 import ingest_phase1_sheet
 from probception.trace.ledger import Ledger
 from probception.trace.report import write_report
 
@@ -277,6 +278,20 @@ def risk_profile(
     console.print(f"json:   [cyan]{report.with_name('risk_profile.json')}[/cyan]")
     if output_json:
         console.print_json(profile.model_dump_json())
+
+
+@app.command("ingest-phase1")
+def ingest_phase1(
+    no_memory: bool = typer.Option(False, "--no-memory", help="Skip memory-store writes."),
+) -> None:
+    """Fetch the Phase 1 review sheet and prepare Phase 2 memory records."""
+    summary = ingest_phase1_sheet(store_memory=not no_memory)
+    table = Table(title="Phase 1 Sheet Ingested", title_justify="left")
+    table.add_column("Field")
+    table.add_column("Value", overflow="fold")
+    for key, value in summary.items():
+        table.add_row(key, ", ".join(value) if isinstance(value, list) else str(value))
+    console.print(table)
 
 
 @app.command()

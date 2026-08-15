@@ -35,9 +35,14 @@ class Settings:
     proto_api_key: str = field(default_factory=lambda: _get("PROTO_API_KEY"))
     proto_base_url: str = field(default_factory=lambda: _get("PROTO_BASE_URL"))
     modal_token_id: str = field(default_factory=lambda: _get("MODAL_TOKEN_ID"))
+    modal_token_secret: str = field(default_factory=lambda: _get("MODAL_TOKEN_SECRET"))
     tamarind_api_key: str = field(default_factory=lambda: _get("TAMARIND_API_KEY"))
+    tamarind_base_url: str = field(
+        default_factory=lambda: _get("TAMARIND_BASE_URL", "https://app.tamarind.bio/api")
+    )
     benchling_api_key: str = field(default_factory=lambda: _get("BENCHLING_API_KEY"))
     phylo_api_key: str = field(default_factory=lambda: _get("PHYLO_API_KEY"))
+    mongodb_uri: str = field(default_factory=lambda: _get("MONGODB_URI"))
 
     @property
     def live(self) -> bool:
@@ -55,6 +60,7 @@ class Settings:
             ("PROTO_API_KEY", bool(self.proto_api_key), "Proto credits slide"),
             ("MODAL_TOKEN_ID", bool(self.modal_token_id), "modal setup"),
             ("TAMARIND_API_KEY", bool(self.tamarind_api_key), "app.tamarind.bio"),
+            ("MONGODB_URI", bool(self.mongodb_uri), "MongoDB Atlas"),
             ("BENCHLING_API_KEY", bool(self.benchling_api_key), "hackathon.bnchdev.org"),
             ("PHYLO_API_KEY", bool(self.phylo_api_key), "biomni.phylo.bio"),
         ]

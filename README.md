@@ -72,6 +72,13 @@ confidence; FDA approval proxy; commercial success proxy; and the agent-facing
 reasoning trail. The current comparator set is Casgevy, VERVE-101, VERVE-102,
 and NTLA-2001.
 
+Phase 2 starts by importing the science team's Phase 1 review sheet into compact
+agent memory:
+
+```bash
+uv run probception ingest-phase1
+```
+
 Full setup for macOS, Windows, and Linux: **[docs/SETUP.md](docs/SETUP.md)**
 
 ---
@@ -166,6 +173,11 @@ Paperclip CLI, hosted MCP, Proto, Modal, Tamarind, and Phylo can all fail withou
 taking the demo down; the system falls back to deterministic seed trials, mock
 evidence, or a scripted lab while preserving the failure reason in metadata.
 
+**Phase 2 memory** — MongoDB Atlas/vector search is used when configured;
+otherwise the same MCP tools fall back to deterministic JSONL memory under
+`.probception_memory/`. Memory stores source context and labels only. It never
+sets scores, ranks experiments, or updates beliefs.
+
 **Deliberately not used** — a vector database, a web framework, or an orchestration library. The ledger is a JSONL file and the inspector is one self-contained HTML page. On hackathon wifi, every dependency is a liability.
 
 Full integration notes, credit redemption, and rate limits: **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**
@@ -179,6 +191,8 @@ probception/
 ├── src/probception/
 │   ├── types.py            # Every contract, as a Pydantic model
 │   ├── clinical.py         # Clinical asset derisking risk profile
+│   ├── memory.py           # Phase 2 retrieval cache + deterministic embeddings
+│   ├── phase2.py           # Phase 1 sheet ingestion and memory preparation
 │   ├── belief/state.py     # Bayes, entropy, surprise — pure and tested
 │   ├── design/eig.py       # Expected information gain, cost-adjusted ranking
 │   ├── agents/
@@ -188,9 +202,9 @@ probception/
 │   ├── trace/              # Hash-chained ledger + standalone HTML inspector
 │   ├── eval/               # Calibration + the counterfactual harness
 │   ├── loop.py             # The closed loop
-│   └── cli.py              # doctor / demo / ask / risk-profile / counterfactual / score / verify
+│   └── cli.py              # doctor / demo / ask / risk-profile / ingest-phase1 / counterfactual / score / verify
 ├── tests/                  # Belief, EIG, ledger integrity, end-to-end loop
-└── docs/                   # Setup, coordination, integrations, architecture, logs
+└── docs/                   # Setup, phase memory, integrations, architecture, logs
 ```
 
 ---
@@ -203,6 +217,7 @@ probception/
 | `probception demo` | Full closed loop on a built-in question. No API key required. |
 | `probception ask "<question>"` | Run the loop on your own question. |
 | `probception risk-profile "<asset>" "<trial design>"` | Produce the in vivo CRISPR clinical asset risk profile and responsive report. |
+| `probception ingest-phase1` | Fetch the Phase 1 Google Sheet rubric and write Phase 2 memory records. |
 | `probception counterfactual` | The closing-the-loop proof. Exits non-zero if the loop is open. |
 | `probception score <run-id>` | Calibration (Brier, log score, top-1) from the ledger alone. |
 | `probception report <run-id>` | Rebuild the standalone HTML inspector. |
@@ -217,14 +232,15 @@ Six people, re:AGENT, 2 Marina Boulevard, Building C.
 
 | | Focus |
 |---|---|
-| **Stephen** | _claim your lane in [docs/COORDINATION.md](docs/COORDINATION.md)_ |
+| **Stephen** | _—_ |
 | **Anjane** | _—_ |
 | **Kanishk** | _—_ |
 | **Chaitra** | _—_ |
 | **Kent** | _—_ |
 | **Sameer** | _—_ |
 
-Working agreements, branch conventions, the merge protocol, and the hour-by-hour plan live in **[docs/COORDINATION.md](docs/COORDINATION.md)**.
+Phase 2 coordination now happens through source-labeled memory collections and
+the execution log, not a shared coordination doc.
 
 ---
 
@@ -233,9 +249,9 @@ Working agreements, branch conventions, the merge protocol, and the hour-by-hour
 | Doc | Read it when |
 |---|---|
 | **[SETUP.md](docs/SETUP.md)** | You are setting up a laptop (macOS / Windows / Linux) |
-| **[COORDINATION.md](docs/COORDINATION.md)** | You want to know who owns what and how we merge |
 | **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** | You want the design rationale and the extension points |
 | **[CLINICAL_DERISKING.md](docs/CLINICAL_DERISKING.md)** | You are working on the in vivo CRISPR risk-profile product |
+| **[PHASE2_MEMORY.md](docs/PHASE2_MEMORY.md)** | You are wiring the Phase 1 sheet, MCP tools, and persistent agent memory |
 | **[REGULATORY_EVIDENCE_MAP.md](REGULATORY_EVIDENCE_MAP.md)** | You are mapping FDA benefit-risk evidence for gene-editing applications |
 | **[INTEGRATIONS.md](docs/INTEGRATIONS.md)** | You are wiring up Paperclip / Proto / Modal / Benchling |
 | **[EXECUTION_LOG.md](docs/EXECUTION_LOG.md)** | You want to know what happened when, and what we decided |
@@ -248,9 +264,10 @@ Working agreements, branch conventions, the merge protocol, and the hour-by-hour
 
 **Pre-phase product running.** The reasoning core, belief math, EIG planner,
 ledger, inspector, evaluation harness, clinical derisking workflow, Paperclip MCP
-bridge, deterministic fallbacks, CLI, and test suite are done and green. The
-current product input is a clinical asset plus planned trial design; the output
-is a renderable risk profile for in vivo CRISPR, focused on LNP delivery.
+bridge, Phase 2 memory ingestion, deterministic fallbacks, CLI, and test suite
+are done and green. The current product input is a clinical asset plus planned
+trial design; the output is a renderable risk profile for in vivo CRISPR,
+focused on LNP delivery.
 
 What is left is the science-team pass: manually review the clinical asset data,
 replace or defend the seed scoring rubric, then generate and validate the Claude

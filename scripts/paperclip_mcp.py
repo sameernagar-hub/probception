@@ -20,6 +20,15 @@ from typing import Any
 from dotenv import load_dotenv
 
 from probception.clinical import TrialRecord, profile_to_json, score_asset, seed_trial_records
+from probception.memory import get_memory_store
+from probception.phase2 import (
+    build_paper_fetch_plan,
+    fetch_strategy_records,
+    ingest_phase1_sheet,
+    load_phase1_domains,
+    memory_records_from_sources,
+    phase1_memory_records,
+)
 
 JSON = dict[str, Any]
 
@@ -85,6 +94,86 @@ def call_tool(name: str, args: JSON) -> str:
             trials=gather_trial_data([str(args.get("asset", ""))]),
         )
         return profile_to_json(profile)
+    if name == "import_phase1_sheet_rows":
+        csv_text = str(args.get("csv_text") or "")
+        if csv_text:
+            domains = load_phase1_domains(csv_text)
+            records = phase1_memory_records(domains)
+            upserts = get_memory_store().upsert_many(records)
+            return json.dumps(
+                {
+                    "rows": len(domains),
+                    "domain_keys": [domain.domain_key for domain in domains],
+                    "memory_records": len(records),
+                    "memory_upserts": upserts,
+                },
+                indent=2,
+            )
+        return json.dumps(ingest_phase1_sheet(), indent=2)
+    if name == "memory_search_evidence":
+        query = str(args.get("query", ""))
+        records = get_memory_store().search(
+            query,
+            namespace=str(args.get("namespace", "phase2")),
+            limit=int(args.get("limit", 8)),
+        )
+        return json.dumps([r.model_dump(mode="json") for r in records], indent=2)
+    if name == "memory_upsert_evidence":
+        items = args.get("items") or []
+        if not isinstance(items, list):
+            raise ValueError("items must be a list")
+        records = memory_records_from_sources(items, namespace=str(args.get("namespace", "phase2")))
+        upserts = get_memory_store().upsert_many(records)
+        return json.dumps({"memory_records": len(records), "memory_upserts": upserts}, indent=2)
+    if name == "collect_clinical_asset_evidence":
+        asset = str(args.get("asset", ""))
+        design = str(args.get("planned_trial_design", ""))
+        store = get_memory_store()
+        learned = store.search(f"fetch strategy {asset}", limit=3)
+        plan = build_paper_fetch_plan(asset, design, learned_context=[record.text for record in learned])
+        outputs = []
+        for step in plan:
+            outputs.append(
+                {
+                    "source": step["source"],
+                    "query": step["query"],
+                    "result": paperclip_search(step["query"], source=step["source"], limit=3),
+                }
+            )
+        trials = gather_trial_data([asset])
+        records = memory_records_from_sources(
+            [trial.model_dump(mode="json") for trial in trials]
+            + [{"source": "paperclip", "title": row["query"], "summary": row["result"]} for row in outputs]
+            + [record.model_dump(mode="json") for record in learned]
+        )
+        strategy_records = fetch_strategy_records(asset, design, outputs)
+        upserts = store.upsert_many(records + strategy_records)
+        return json.dumps(
+            {
+                "asset": asset,
+                "queries": plan,
+                "paperclip_api": "used when PAPERCLIP_API_KEY or Paperclip CLI is configured; seed fallback otherwise",
+                "learned_fetch_strategies": len(learned),
+                "trial_records": len(trials),
+                "memory_records": len(records) + len(strategy_records),
+                "memory_upserts": upserts,
+                "results": outputs,
+            },
+            indent=2,
+        )
+    if name == "memory_get_asset_context":
+        asset = str(args.get("asset", ""))
+        records = get_memory_store().search(asset, limit=int(args.get("limit", 8)))
+        compact = [
+            {
+                "source_label": r.source_label,
+                "kind": r.kind,
+                "title": r.title,
+                "text": r.text[:500],
+            }
+            for r in records
+        ]
+        return json.dumps({"asset": asset, "context": compact}, indent=2)
     raise ValueError(f"Unknown tool: {name}")
 
 
@@ -201,6 +290,63 @@ def _tools() -> list[JSON]:
                     "planned_trial_design": {"type": "string"},
                 },
                 "required": ["asset", "planned_trial_design"],
+            },
+        },
+        {
+            "name": "import_phase1_sheet_rows",
+            "description": "Fetch or import Phase 1 Google Sheet rubric rows and write compact domain records to memory.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {"csv_text": {"type": "string"}},
+            },
+        },
+        {
+            "name": "collect_clinical_asset_evidence",
+            "description": "Fan out Paperclip searches and trial gathering for a clinical asset, then store reusable memory records.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "asset": {"type": "string"},
+                    "planned_trial_design": {"type": "string"},
+                },
+                "required": ["asset", "planned_trial_design"],
+            },
+        },
+        {
+            "name": "memory_search_evidence",
+            "description": "Search Atlas memory first, falling back to local deterministic JSONL memory.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "namespace": {"type": "string", "default": "phase2"},
+                    "limit": {"type": "integer", "default": 8},
+                },
+                "required": ["query"],
+            },
+        },
+        {
+            "name": "memory_upsert_evidence",
+            "description": "Store normalized source/evidence records in Atlas or local fallback memory.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "namespace": {"type": "string", "default": "phase2"},
+                    "items": {"type": "array", "items": {"type": "object"}},
+                },
+                "required": ["items"],
+            },
+        },
+        {
+            "name": "memory_get_asset_context",
+            "description": "Return compact source-label context for a clinical asset to reduce prompt tokens.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "asset": {"type": "string"},
+                    "limit": {"type": "integer", "default": 8},
+                },
+                "required": ["asset"],
             },
         },
     ]
