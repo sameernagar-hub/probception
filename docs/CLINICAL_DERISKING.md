@@ -37,6 +37,11 @@ Primary live source is Paperclip because it indexes PMC, arXiv, bioRxiv,
 medRxiv, OpenAlex abstracts, FDA, ClinicalTrials.gov, international registries,
 UniProt, PDB, and ChEMBL from one agent-native interface.
 
+For FDA-facing benefit-risk extraction, use
+[`REGULATORY_EVIDENCE_MAP.md`](../REGULATORY_EVIDENCE_MAP.md). That teammate
+map defines the regulatory fields Probception should fill from FDA review
+documents and Paperclip citation lines.
+
 Current seed comparators:
 
 | Asset | Trial | Sponsor | Phase | Why it matters |
