@@ -10,7 +10,7 @@
 [![Runs offline](https://img.shields.io/badge/demo-runs%20with%20zero%20API%20keys-4ade80)](#)
 [![License MIT](https://img.shields.io/badge/license-MIT-8b98a5)](#)
 
-**[Quickstart](#quickstart-90-seconds) · [How it works](#how-it-works) · [Why it wins](#how-this-maps-to-the-judging-criteria) · [Setup](docs/SETUP.md) · [Team](#the-team)**
+**[Quickstart](#quickstart-90-seconds) · [How it works](#how-it-works) · [Phase 2](#phase-2-memory-and-paperclip) · [Why it wins](#how-this-maps-to-the-judging-criteria) · [Setup](docs/SETUP.md)**
 
 </div>
 
@@ -19,6 +19,11 @@
 ## The one-line pitch
 
 > Most AI research agents give you an answer. **Probception gives you a probability, the evidence behind it, and the single next experiment most likely to change its mind.**
+
+The hackathon product is now focused: **clinical asset derisking for in vivo
+CRISPR, especially LNP-delivered editing assets.** Input a clinical asset plus
+planned trial design; get a renderable risk profile with safety, efficacy,
+confidence, FDA approval, and commercial-success scores.
 
 ## The problem, in plain English
 
@@ -36,7 +41,12 @@ $$\text{EIG}(e) = H(\text{belief}) - \mathbb{E}_{o \sim P(o)}\big[H(\text{belief
 
 selects $\arg\max_e \text{EIG}(e)/\text{cost}(e)$, executes it against **data it has not seen**, and applies Bayes' rule. Every step — retrieval, hypothesis, prediction, score, observation, update — is written to a **hash-chained append-only ledger** before it takes effect, so any run can be replayed, graded, and audited from disk with no live model in the loop.
 
-The scientific domain is a plug-in. The reasoning core does not care whether an "experiment" is a literature query, a protein design job on Modal, an ESM embedding sweep, or a wet-lab assay someone runs on Monday.
+The scientific domain is a plug-in. The reasoning core does not care whether an
+"experiment" is a literature query, a protein design job on Modal, an ESM
+embedding sweep, or a wet-lab assay someone runs on Monday. The clinical product
+sits beside that loop: it gathers trial and paper evidence, writes source-labeled
+memory, and computes deterministic risk scores without letting the LLM adjust the
+math.
 
 ---
 
@@ -46,7 +56,7 @@ No API keys needed. The whole loop runs offline.
 
 ```bash
 git clone https://github.com/sameernagar-hub/probception && cd probception
-uv sync
+uv sync --extra dev
 uv run probception doctor
 uv run probception demo
 ```
@@ -73,11 +83,21 @@ reasoning trail. The current comparator set is Casgevy, VERVE-101, VERVE-102,
 and NTLA-2001.
 
 Phase 2 starts by importing the science team's Phase 1 review sheet into compact
-agent memory:
+agent memory. With MongoDB Atlas configured, this writes Atlas records; without
+it, the same command falls back to `.probception_memory/memory.jsonl`.
 
 ```bash
 uv run probception ingest-phase1
 ```
+
+The local Paperclip MCP bridge is the Phase 2 data loop:
+
+```bash
+uv run python scripts/paperclip_mcp.py
+```
+
+It can fetch fresh trial/paper evidence on demand, then remember the source
+routes that worked so later agents search better.
 
 Full setup for macOS, Windows, and Linux: **[docs/SETUP.md](docs/SETUP.md)**
 
@@ -105,7 +125,9 @@ flowchart LR
     L --> I[HTML inspector]
     L --> E[Calibration + counterfactual eval]
 
-    C([Clinical asset + planned trial]) --> RP[Derisk profile<br/><i>deterministic scoring</i>]
+    C([Clinical asset + planned trial]) --> F[Adaptive evidence fetch<br/><i>Paperclip routes</i>]
+    F --> M[(Atlas / JSONL memory<br/><i>source labels + fetch strategies</i>)]
+    M --> RP[Derisk profile<br/><i>deterministic scoring</i>]
     RP --> RPT([Responsive risk report])
 ```
 
@@ -117,6 +139,8 @@ flowchart LR
 |---|---|---|---|
 | **Evidence** | `adapters/` | Retrieve papers, datasets, trials, assay results as content-addressed `Evidence` | no |
 | **Clinical derisking** | `clinical.py` | Score in vivo CRISPR asset risk from trial evidence and hardcoded rubric | no |
+| **Phase 2 memory** | `memory.py` / `phase2.py` | Store Phase 1 rubric rows, source labels, evidence snippets, and fetch strategies | no |
+| **MCP bridge** | `scripts/paperclip_mcp.py` | Expose Paperclip search, clinical trial gathering, asset-context retrieval, and memory upserts | no |
 | **Hypothesis** | `agents/scientist.py` | Turn a question into 3–5 competing falsifiable claims with priors | **yes** |
 | **Design** | `agents/scientist.py` | Propose candidate experiments with full `P(outcome \| hypothesis)` tables | **yes** |
 | **Selection** | `design/eig.py` | Compute EIG, rank by information per unit cost, choose | no |
@@ -134,8 +158,8 @@ flowchart LR
 | **Closing the loop** — *does the agent analyse data it hasn't seen and propose a next experiment that changes when the results change?* | Held-out execution via adapters the agent cannot inspect, plus a **counterfactual replay harness** that runs the same agent across contradictory worlds and diffs the proposal. Belief divergence is reported as a number; an unresponsive loop exits non-zero. | `probception counterfactual` |
 | **Inspectability** — *can the agent reconstruct why it made its decisions?* | Append-only **hash-chained ledger**: every candidate considered (not just the winner), its EIG, its cost, the prediction made *before* the result, the observation, the surprise in bits, and the before/after posterior. Rendered to a zero-dependency HTML inspector. Tampering is detectable. | `probception report <run>`<br>`probception verify <run>` |
 | **Validation** | Predictions are recorded before outcomes arrive, so **Brier score and log score** are computed from the ledger alone against an uninformed baseline. The deterministic reasoner is a built-in **ablation arm**: swap out the LLM and measure how much of the result came from the model versus the Bayesian machinery. | `probception score <run>`<br>`probception ask "..." --offline` |
-| **Creative use of the tools** | Paperclip is an evidence layer whose hits become priors, not a search box. Proto/ESM/Tamarind runs are treated as **experiments with pre-declared outcome thresholds** — recorded in the ledger *before* submission, so goalposts cannot move. Modal is the execution substrate. Claude does hypothesis generation under a strict falsifiability contract with structured outputs and prompt caching. | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) |
-| **Hackathon product focus** | In vivo CRISPR clinical asset derisking: input an asset plus planned trial design; output a risk profile with safety, efficacy, confidence, FDA, and commercial-success scores. Integrations have deterministic fallbacks so the demo survives failed APIs. | `probception risk-profile ...` |
+| **Creative use of the tools** | Paperclip is an evidence layer plus an adaptive fetch loop: it searches trials, FDA, PMC, arXiv, bioRxiv, medRxiv, and OpenAlex-style routes, then stores `fetch_strategy` records so later agents refine the search. Proto/ESM/Tamarind runs are treated as **experiments with pre-declared outcome thresholds** recorded before submission. Modal is the execution substrate. Claude does hypothesis generation under a strict falsifiability contract with structured outputs and prompt caching. | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)<br>[docs/PHASE2_MEMORY.md](docs/PHASE2_MEMORY.md) |
+| **Hackathon product focus** | In vivo CRISPR clinical asset derisking: input an asset plus planned trial design; output a risk profile with safety, efficacy, confidence, FDA, and commercial-success scores. Integrations have deterministic fallbacks so the demo survives failed APIs. | `probception risk-profile ...`<br>`probception ingest-phase1` |
 
 **The claim we are willing to be tested on:** an experiment whose result you can already predict is worth zero bits, no matter how expensive or impressive it looks. Probception will refuse to rank it highly, and the ledger shows exactly why.
 
@@ -168,6 +192,10 @@ Note what happened there: the agent did **not** pick the highest-information exp
 
 **Scientific tooling** — GXL Paperclip (evidence) · Proto (biological design) · Modal (compute) · ESM / Boltz (representations and structure) · Tamarind (hosted jobs) · Benchling (LIMS + MCP) · Phylo/Biomni.
 
+**Memory** — MongoDB Atlas/vector search when configured · deterministic JSONL
+fallback when not · hash embeddings for offline retrieval · source labels to
+compress repeated context.
+
 **Fallback stance** — live integrations are optional accelerators. Paperclip SDK,
 Paperclip CLI, hosted MCP, Proto, Modal, Tamarind, and Phylo can all fail without
 taking the demo down; the system falls back to deterministic seed trials, mock
@@ -178,7 +206,9 @@ otherwise the same MCP tools fall back to deterministic JSONL memory under
 `.probception_memory/`. Memory stores source context and labels only. It never
 sets scores, ranks experiments, or updates beliefs.
 
-**Deliberately not used** — a vector database, a web framework, or an orchestration library. The ledger is a JSONL file and the inspector is one self-contained HTML page. On hackathon wifi, every dependency is a liability.
+**Deliberately kept small** — no web framework and no orchestration library. The
+core ledger is still JSONL and the inspector is still one self-contained HTML
+page. Atlas is optional memory, not a requirement for the demo.
 
 Full integration notes, credit redemption, and rate limits: **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**
 
@@ -198,12 +228,13 @@ probception/
 │   ├── agents/
 │   │   ├── llm.py          # Claude wrapper: structured outputs, caching, tracing
 │   │   └── scientist.py    # LLM reasoner + deterministic ablation arm
-│   ├── adapters/           # Paperclip, Proto, mock/scripted — the only I/O
+│   ├── adapters/           # Paperclip, Proto, Google Sheet, Tamarind, mock/scripted I/O
 │   ├── trace/              # Hash-chained ledger + standalone HTML inspector
 │   ├── eval/               # Calibration + the counterfactual harness
 │   ├── loop.py             # The closed loop
 │   └── cli.py              # doctor / demo / ask / risk-profile / ingest-phase1 / counterfactual / score / verify
-├── tests/                  # Belief, EIG, ledger integrity, end-to-end loop
+├── data/                   # Versioned Phase 1 regulatory review-map seed files
+├── tests/                  # Belief, EIG, memory, ledger integrity, end-to-end loop
 └── docs/                   # Setup, phase memory, integrations, architecture, logs
 ```
 
@@ -218,11 +249,36 @@ probception/
 | `probception ask "<question>"` | Run the loop on your own question. |
 | `probception risk-profile "<asset>" "<trial design>"` | Produce the in vivo CRISPR clinical asset risk profile and responsive report. |
 | `probception ingest-phase1` | Fetch the Phase 1 Google Sheet rubric and write Phase 2 memory records. |
+| `python scripts/paperclip_mcp.py` | Start the local MCP bridge for Paperclip search, trial gathering, adaptive fetch memory, and scoring. |
 | `probception counterfactual` | The closing-the-loop proof. Exits non-zero if the loop is open. |
 | `probception score <run-id>` | Calibration (Brier, log score, top-1) from the ledger alone. |
 | `probception report <run-id>` | Rebuild the standalone HTML inspector. |
 | `probception verify <run-id>` | Re-walk the hash chain to prove the ledger was not edited. |
 | `probception runs` | List runs on this machine. |
+
+---
+
+## Phase 2 Memory And Paperclip
+
+Phase 2 turns the science team's review rubric and Paperclip results into
+reusable memory without breaking the core rule that the LLM never scores or
+updates beliefs.
+
+What is live now:
+
+- The Phase 1 Google Sheet is normalized into 12 FDA review domains under
+  `data/phase1_regulatory_review_map.csv` and `.json`.
+- `probception ingest-phase1` writes those domains to Atlas if `MONGODB_URI` is
+  configured, or local JSONL memory if it is not.
+- The MCP tool `collect_clinical_asset_evidence` searches Paperclip routes for
+  trials, FDA, PMC, arXiv, bioRxiv, medRxiv, and OpenAlex-style evidence.
+- Each fetch stores both the evidence snippet and a `fetch_strategy` record.
+  Later calls retrieve those strategies and refine queries with stable hints
+  such as off-target, biodistribution, immunogenicity, dose-response, LDL-C,
+  PCSK9, liver, and LNP.
+- Memory is retrieval only. It can help the agent look in better places; it
+  cannot change deterministic scores, experiment rankings, outcome labels, or
+  belief updates.
 
 ---
 
@@ -239,8 +295,8 @@ Six people, re:AGENT, 2 Marina Boulevard, Building C.
 | **Kent** | _—_ |
 | **Sameer** | _—_ |
 
-Phase 2 coordination now happens through source-labeled memory collections and
-the execution log, not a shared coordination doc.
+Phase 2 coordination now happens through source-labeled memory collections, MCP
+tool outputs, and the execution log, not a shared coordination doc.
 
 ---
 
@@ -262,16 +318,16 @@ the execution log, not a shared coordination doc.
 
 ## Status
 
-**Pre-phase product running.** The reasoning core, belief math, EIG planner,
-ledger, inspector, evaluation harness, clinical derisking workflow, Paperclip MCP
-bridge, Phase 2 memory ingestion, deterministic fallbacks, CLI, and test suite
-are done and green. The current product input is a clinical asset plus planned
-trial design; the output is a renderable risk profile for in vivo CRISPR,
+**Phase 2 ready.** The reasoning core, belief math, EIG planner, ledger,
+inspector, evaluation harness, clinical derisking workflow, Paperclip MCP bridge,
+adaptive evidence fetching, Atlas/JSONL memory, deterministic fallbacks, CLI, and
+test suite are done and green. The current product input is a clinical asset plus
+planned trial design; the output is a renderable risk profile for in vivo CRISPR,
 focused on LNP delivery.
 
-What is left is the science-team pass: manually review the clinical asset data,
-replace or defend the seed scoring rubric, then generate and validate the Claude
-skill for Phase 2.
+Next up: science-team review of clinical asset labels, hardcoded rubric
+validation, Claude skill generation, and Phase 3 processing over the accumulated
+memory/evidence set.
 
 ---
 
