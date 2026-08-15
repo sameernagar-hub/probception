@@ -52,7 +52,7 @@ def _pick_scientist(force_heuristic: bool = False) -> Scientist:
     if claude.available:
         return LLMScientist(claude)
     console.print(
-        "[yellow]No ANTHROPIC_API_KEY found — using the deterministic reasoner.[/yellow] "
+        "[yellow]No ANTHROPIC_API_KEY found - using the deterministic reasoner.[/yellow] "
         "The full loop still runs; only hypothesis generation is offline."
     )
     return HeuristicScientist()
@@ -64,7 +64,7 @@ def _belief_table(belief: dict[str, float], title: str) -> Table:
     table.add_column("p", justify="right", width=7)
     table.add_column("", width=22)
     for stmt, p in sorted(belief.items(), key=lambda kv: -kv[1]):
-        bar = "█" * max(int(p * 20), 0)
+        bar = "#" * max(int(p * 20), 0)
         table.add_row(stmt, f"{p:.3f}", f"[cyan]{bar}[/cyan]")
     return table
 
@@ -160,7 +160,7 @@ def ask(
         with console.status(f"[cyan]step {i + 1}: designing and scoring...[/cyan]"):
             winner, scored = loop.propose(n=candidates)
 
-        table = Table(title=f"Step {i + 1} — candidates scored by information gain",
+        table = Table(title=f"Step {i + 1} - candidates scored by information gain",
                       title_justify="left")
         table.add_column("Experiment", overflow="fold")
         table.add_column("EIG", justify="right", width=7)
@@ -173,7 +173,7 @@ def ask(
                 s.experiment.title + mark,
                 f"{s.eig:.3f}",
                 f"{s.experiment.cost:.1f}",
-                f"{s.times_run}x" if s.times_run else "—",
+                f"{s.times_run}x" if s.times_run else "-",
                 f"{s.utility:.3f}",
             )
         console.print(table)
@@ -288,7 +288,7 @@ def counterfactual(
     """Run the same agent against contradictory results and diff what it proposes.
 
     This is the closing-the-loop proof. If the agent proposes the same next
-    experiment no matter what the data said, it fails here — loudly.
+    experiment no matter what the data said, it fails here - loudly.
     """
     console.print(
         Panel(
@@ -315,7 +315,7 @@ def counterfactual(
     table.add_column("Leading hypothesis after evidence", overflow="fold")
     table.add_column("Proposes next", overflow="fold")
     for name in result.proposals:
-        table.add_row(name, result.leaders[name], result.proposals[name] or "—")
+        table.add_row(name, result.leaders[name], result.proposals[name] or "-")
     console.print(table)
 
     style = "green" if result.responsive else "red"
@@ -335,11 +335,11 @@ def score(run_id: str = typer.Argument(..., help="Run id to grade.")) -> None:
         console.print(f"[red]No ledger found for run {run_id}[/red]")
         raise typer.Exit(code=1)
     report = score_run(ledger)
-    console.print(Panel(report.summary(), title=f"Calibration — {run_id}", border_style="cyan"))
+    console.print(Panel(report.summary(), title=f"Calibration - {run_id}", border_style="cyan"))
     if report.n and not report.beats_baseline:
         console.print(
             "[yellow]The agent's probabilities are not beating an uninformed guess. "
-            "That is a real finding — report it rather than tuning until it goes away.[/yellow]"
+            "That is a real finding - report it rather than tuning until it goes away.[/yellow]"
         )
 
 
@@ -367,7 +367,7 @@ def runs() -> None:
     """List runs on this machine."""
     root = Path(settings.run_dir)
     if not root.exists():
-        console.print("no runs yet — try [bold]probception demo[/bold]")
+        console.print("no runs yet - try [bold]probception demo[/bold]")
         return
     table = Table(title="Runs", title_justify="left")
     table.add_column("Run id")
@@ -376,7 +376,7 @@ def runs() -> None:
     for d in sorted(root.iterdir()):
         if (d / "ledger.jsonl").exists():
             n = len(Ledger.load(d.name, str(root)).read())
-            table.add_row(d.name, str(n), "yes" if (d / "report.html").exists() else "—")
+            table.add_row(d.name, str(n), "yes" if (d / "report.html").exists() else "-")
     console.print(table)
 
 

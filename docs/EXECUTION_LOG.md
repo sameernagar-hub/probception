@@ -15,6 +15,21 @@ so they can be referenced from PRs and from the demo.
 
 ## Day 1 — Saturday, 15 August 2026
 
+### 13:35 · Windows CI console encoding fixed · Codex
+
+GitHub Actions passed on Linux and macOS, but Windows failed during
+`probception demo --steps 2` because Rich tried to print Unicode block bars to a
+legacy `cp1252` console. Terminal-facing CLI output is now ASCII-safe.
+
+**Verified:**
+```
+uv run probception demo --steps 2
+uv run pytest
+uv run ruff check src tests scripts
+```
+
+---
+
 ### 12:45 · Clinical derisking product locked · Sameer + Codex
 
 Scientific vertical finalized: clinical asset derisking for in vivo CRISPR,
