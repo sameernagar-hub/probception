@@ -1,0 +1,194 @@
+[
+  {
+    "id": "ph1_53fe48b7af7d7262",
+    "domain_key": "disease_context_mechanism",
+    "review_domain": "Disease Context & Mechanism",
+    "core_question": "What is the unmet need and biological rationale?",
+    "primary_review_data": "Natural-history or external controls, mechanism of action (MoA), literature benchmarks",
+    "detailed_review_elements": "\u2022 Disease name, etiology, and core symptoms\n\u2022 Mechanism of action\n\u2022 Literature review\n\u2022 Prior landscape / similar products on the market",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 2,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_33e03c31f9011b09",
+    "domain_key": "trial_design",
+    "review_domain": "Trial design",
+    "core_question": "Does the therapy improve a clinically meaningful endpoint?",
+    "primary_review_data": "Pivotal trials, responder analyses, durability of response, surrogate endpoints",
+    "detailed_review_elements": "\u2022 Target effects (in vitro, in vivo, clinical)\n\u2022 Dose-response results\n\u2022 Inclusion / exclusion criteria\n\u2022 Experimental & trial study design\n\u2022 Efficacy endpoints & responder rates",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 3,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_f4a43466a40fa2ba",
+    "domain_key": "acute_safety_tolerability",
+    "review_domain": "Acute Safety & Tolerability",
+    "core_question": "What harms occur shortly after dosing?",
+    "primary_review_data": "Adverse events (AEs), laboratory trends, organ toxicity, infusion reactions, cytopenias",
+    "detailed_review_elements": "\u2022 Adverse Events by System Organ Class (SOC)\n\u2022 Non-fatal adverse events & serious AEs\n\u2022 Blood test results & organ function panels\n\u2022 Expected & unexpected off-target effects",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 4,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_fa2f11b5b9a1289d",
+    "domain_key": "long_term_genetic_risk",
+    "review_domain": "Long-Term Genetic Risk",
+    "core_question": "Could the therapy cause malignancy or unintended genetic alterations?",
+    "primary_review_data": "Integration-site analysis, off-target editing assays, clonality, tumor surveillance",
+    "detailed_review_elements": "\u2022 Off-target editing assays (in vitro / in vivo)\n\u2022 Malignancy and insertional oncogenesis screening\n\u2022 Genomic stability assessments",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 5,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_ab558ec3494415f3",
+    "domain_key": "biodistribution_pharmacology",
+    "review_domain": "Biodistribution & Pharmacology",
+    "core_question": "Where does the vector/cell product go and what does it express?",
+    "primary_review_data": "Animal biodistribution, transgene expression, vector shedding, biomarker kinetics",
+    "detailed_review_elements": "\u2022 In vivo biodistribution profiles\n\u2022 Transgene expression & cellular kinetics\n\u2022 Time-dependency of exposure",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 6,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_a63c0abea497f5dd",
+    "domain_key": "immunogenicity_special_populations",
+    "review_domain": "Immunogenicity & Special Populations",
+    "core_question": "Can host immune responses limit efficacy or cause severe toxicity?",
+    "primary_review_data": "Anti-capsid antibodies, anti-transgene antibodies, cellular immunity, re-dosing constraints",
+    "detailed_review_elements": "\u2022 Baseline demographics & comorbidities\n\u2022 Special populations (e.g., pediatric, renal/hepatic impairment)\n\u2022 Neutralizing antibodies & T-cell responses",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 7,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_8663d19150a4686d",
+    "domain_key": "product_quality_cmc",
+    "review_domain": "Product Quality & CMC",
+    "core_question": "Can commercial lots be manufactured consistently, potently, and safely?",
+    "primary_review_data": "Identity, purity, potency, impurities, stability, comparability, process validation",
+    "detailed_review_elements": "\u2022 Assay validation\n\u2022 Quality compliance & release specifications\n\u2022 Facility inspection records & process consistency",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 8,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_71b03f0a22e74cb7",
+    "domain_key": "trial_integrity_governance_ops",
+    "review_domain": "Trial Integrity, Governance & Operational infrastructure",
+    "core_question": "Were the trials conducted with rigorous compliance and ethical oversight?",
+    "primary_review_data": "Protocol adherence, clinical site audits, GCP inspections",
+    "detailed_review_elements": "\u2022 Good Clinical Practices (GCP) compliance\n\u2022 Protocol deviations & violations\n\u2022 Financial disclosures & investigator conflicts",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 9,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_384faa68ff4ee72b",
+    "domain_key": "benefit_risk_postmarketing",
+    "review_domain": "Benefit\u2013Risk & Postmarketing Controls",
+    "core_question": "What residual uncertainties remain, and how will long-term safety be tracked?",
+    "primary_review_data": "Benefit\u2013risk uncertainty, 15-year patient registries, confirmatory trials, CMC commitments",
+    "detailed_review_elements": "\u2022 Overall risk-benefit assessment criteria\n\u2022 Long-term follow-up (LTFU) protocols (e.g., 15-year tracking)\n\u2022 Pharmacovigilance and risk evaluation mitigation strategies (REMS)",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 10,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": []
+    }
+  },
+  {
+    "id": "ph1_56349519fe5b36f0",
+    "domain_key": "regulatory_precedent",
+    "review_domain": "Regulatory Precedent",
+    "core_question": "",
+    "primary_review_data": "",
+    "detailed_review_elements": "",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 11,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": [
+        "Core Regulatory Question",
+        "Primary Review Data (Act 1)",
+        "Detailed Review Elements & Dossier Components"
+      ]
+    }
+  },
+  {
+    "id": "ph1_0b3d9092b9a472a4",
+    "domain_key": "comparative_landscape",
+    "review_domain": "Comparative landscape",
+    "core_question": "",
+    "primary_review_data": "",
+    "detailed_review_elements": "",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 12,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": [
+        "Core Regulatory Question",
+        "Primary Review Data (Act 1)",
+        "Detailed Review Elements & Dossier Components"
+      ]
+    }
+  },
+  {
+    "id": "ph1_693fe6db99c3e186",
+    "domain_key": "commercial_viability",
+    "review_domain": "Commercial viability",
+    "core_question": "",
+    "primary_review_data": "",
+    "detailed_review_elements": "",
+    "source_url": "https://docs.google.com/spreadsheets/d/1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI/gviz/tq?tqx=out:csv&gid=0",
+    "row_number": 13,
+    "metadata": {
+      "sheet_id": "1Rz6w9t2_BOzPMBghsz8tDFhRe5AxCwayz7ablT3FVXI",
+      "gid": "0",
+      "empty_fields": [
+        "Core Regulatory Question",
+        "Primary Review Data (Act 1)",
+        "Detailed Review Elements & Dossier Components"
+      ]
+    }
+  }
+]

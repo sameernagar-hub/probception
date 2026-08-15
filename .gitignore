@@ -31,6 +31,9 @@ runs/
 data/*
 !data/.gitkeep
 !data/README.md
+!data/phase1_regulatory_review_map.csv
+!data/phase1_regulatory_review_map.json
+.probception_memory/
 *.h5
 *.pt
 *.ckpt

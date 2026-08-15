@@ -110,11 +110,44 @@ thing it cites.
 **MCP:** hosted remote MCP is `https://paperclip.gxl.ai/mcp` with header
 `X-API-Key: ${PAPERCLIP_API_KEY}`. The repo also ships a local stdio bridge at
 `scripts/paperclip_mcp.py` exposing `paperclip_search`,
-`gather_crispr_trial_data`, and `score_clinical_asset`.
+`gather_crispr_trial_data`, `score_clinical_asset`,
+`import_phase1_sheet_rows`, `collect_clinical_asset_evidence`,
+`memory_search_evidence`, `memory_upsert_evidence`, and
+`memory_get_asset_context`.
 
 **If the endpoint shape differs from our guess:** fix `_ENDPOINT` and `_parse` in
 `adapters/paperclip.py`. Nothing downstream changes — that's the point of the
 adapter boundary.
+
+---
+
+## MongoDB Atlas — Phase 2 agent memory
+
+**What it does for us:** stores source-labeled retrieval results, trial facts,
+and Phase 1 review-domain rows so agents can reuse evidence without repeatedly
+fetching and reprompting the same material.
+
+**What it deliberately does *not* do:** score assets, rank experiments, update
+beliefs, or choose outcomes. Memory is retrieval and cache only; deterministic
+scoring stays in `clinical.py`, EIG stays in `design/eig.py`, and Bayes stays in
+`belief/state.py`.
+
+**Implementation:** `memory.py` with the optional `memory` extra. Atlas is used
+when `MONGODB_URI` is configured. If connection, auth, or vector search fails,
+Probception falls back to `.probception_memory/memory.jsonl` and deterministic
+hash embeddings.
+
+```bash
+uv sync --extra memory
+uv run probception ingest-phase1
+```
+
+**Config:** `MONGODB_URI`, `PROBCEPTION_MEMORY_DB`,
+`PROBCEPTION_MEMORY_COLLECTION`, `PROBCEPTION_LOCAL_MEMORY`
+
+The loader also checks `atlas-credentials.env` beside the repo, one directory
+above it, and in `~/Downloads/`, so Atlas secrets do not need to be copied into
+the repository.
 
 ---
 
@@ -200,7 +233,7 @@ a second method that shares no failure mode with the first. Our EIG planner valu
 these highly *because* they are independent, which is a nice case where the
 information-theoretic scoring and the scientific instinct agree.
 
-**Config:** `TAMARIND_API_KEY`
+**Config:** `TAMARIND_API_KEY`, `TAMARIND_BASE_URL`
 
 ---
 

@@ -42,6 +42,16 @@ For FDA-facing benefit-risk extraction, use
 map defines the regulatory fields Probception should fill from FDA review
 documents and Paperclip citation lines.
 
+The Phase 1 science-team review sheet is imported with:
+
+```bash
+uv run probception ingest-phase1
+```
+
+This writes `data/phase1_regulatory_review_map.csv`,
+`data/phase1_regulatory_review_map.json`, and Phase 2 memory records for the
+12 FDA review domains.
+
 Current seed comparators:
 
 | Asset | Trial | Sponsor | Phase | Why it matters |
@@ -57,7 +67,7 @@ Use the official hosted MCP when the client supports remote MCP:
 
 ```text
 https://paperclip.gxl.ai/mcp
-Authorization: Bearer ${PAPERCLIP_API_KEY}
+X-API-Key: ${PAPERCLIP_API_KEY}
 ```
 
 This repo also includes a local stdio bridge:
@@ -71,6 +81,20 @@ See `.mcp.example.json` for both configurations. The local bridge exposes:
 - `paperclip_search`
 - `gather_crispr_trial_data`
 - `score_clinical_asset`
+- `import_phase1_sheet_rows`
+- `collect_clinical_asset_evidence`
+- `memory_search_evidence`
+- `memory_upsert_evidence`
+- `memory_get_asset_context`
+
+`collect_clinical_asset_evidence` is the on-demand fetch path. It fans out over
+trial, FDA, PMC, arXiv, bioRxiv, medRxiv, and OpenAlex-style source searches via
+Paperclip when `PAPERCLIP_API_KEY` or the Paperclip CLI is configured, then
+stores both the evidence snippets and the fetch strategy that found them. Future
+calls retrieve those strategy records first and refine new queries with stable
+hints such as off-target, biodistribution, immunogenicity, dose-response, LDL-C,
+PCSK9, liver, and LNP. The agent learns how to look without letting memory
+change the deterministic scoring rules.
 
 ## Deterministic Fallbacks
 
@@ -101,6 +125,7 @@ Phase 2, engineering/product:
 
 - review the science labels and score outputs
 - generate the full agent flow
+- use the Paperclip MCP plus memory tools to collect trial and source context
 - turn the workflow into a Claude skill
 - validate the Claude skill against held-out successful and failed clinical trials
 

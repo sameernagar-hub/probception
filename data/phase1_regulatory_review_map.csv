@@ -1,0 +1,36 @@
+"FDA Review Domain","Core Regulatory Question","Primary Review Data (Act 1)","Detailed Review Elements & Dossier Components","","","","","","","","","","","","","","","","","","","",""
+"Disease Context & Mechanism","What is the unmet need and biological rationale?","Natural-history or external controls, mechanism of action (MoA), literature benchmarks","• Disease name, etiology, and core symptoms
+• Mechanism of action
+• Literature review
+• Prior landscape / similar products on the market","","","","","","","","","","","","","","","","","","","",""
+"Trial design
+","Does the therapy improve a clinically meaningful endpoint?","Pivotal trials, responder analyses, durability of response, surrogate endpoints","• Target effects (in vitro, in vivo, clinical)
+• Dose-response results
+• Inclusion / exclusion criteria
+• Experimental & trial study design
+• Efficacy endpoints & responder rates","","","","","","","","","","","","","","","","","","","",""
+"Acute Safety & Tolerability","What harms occur shortly after dosing?","Adverse events (AEs), laboratory trends, organ toxicity, infusion reactions, cytopenias","• Adverse Events by System Organ Class (SOC)
+• Non-fatal adverse events & serious AEs
+• Blood test results & organ function panels
+• Expected & unexpected off-target effects","","","","","","","","","","","","","","","","","","","",""
+"Long-Term Genetic Risk","Could the therapy cause malignancy or unintended genetic alterations?","Integration-site analysis, off-target editing assays, clonality, tumor surveillance","• Off-target editing assays (in vitro / in vivo)
+• Malignancy and insertional oncogenesis screening
+• Genomic stability assessments","","","","","","","","","","","","","","","","","","","",""
+"Biodistribution & Pharmacology","Where does the vector/cell product go and what does it express?","Animal biodistribution, transgene expression, vector shedding, biomarker kinetics","• In vivo biodistribution profiles
+• Transgene expression & cellular kinetics
+• Time-dependency of exposure","","","","","","","","","","","","","","","","","","","",""
+"Immunogenicity & Special Populations","Can host immune responses limit efficacy or cause severe toxicity?","Anti-capsid antibodies, anti-transgene antibodies, cellular immunity, re-dosing constraints","• Baseline demographics & comorbidities
+• Special populations (e.g., pediatric, renal/hepatic impairment)
+• Neutralizing antibodies & T-cell responses","","","","","","","","","","","","","","","","","","","",""
+"Product Quality & CMC","Can commercial lots be manufactured consistently, potently, and safely?","Identity, purity, potency, impurities, stability, comparability, process validation","• Assay validation
+• Quality compliance & release specifications
+• Facility inspection records & process consistency","","","","","","","","","","","","","","","","","","","",""
+"Trial Integrity, Governance & Operational infrastructure","Were the trials conducted with rigorous compliance and ethical oversight?","Protocol adherence, clinical site audits, GCP inspections","• Good Clinical Practices (GCP) compliance
+• Protocol deviations & violations
+• Financial disclosures & investigator conflicts","","","","","","","","","","","","","","","","","","","",""
+"Benefit–Risk & Postmarketing Controls","What residual uncertainties remain, and how will long-term safety be tracked?","Benefit–risk uncertainty, 15-year patient registries, confirmatory trials, CMC commitments","• Overall risk-benefit assessment criteria
+• Long-term follow-up (LTFU) protocols (e.g., 15-year tracking)
+• Pharmacovigilance and risk evaluation mitigation strategies (REMS)","","","","","","","","","","","","","","","","","","","",""
+"Regulatory Precedent","","","","","","","","","","","","","","","","","","","","","","",""
+"Comparative landscape ","","","","","","","","","","","","","","","","","","","","","","",""
+"Commercial viability","","","","","","","","","","","","","","","","","","","","","","",""
