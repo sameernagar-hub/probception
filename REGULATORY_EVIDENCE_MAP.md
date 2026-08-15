@@ -207,6 +207,94 @@ These products are administered directly to the patient rather than manufactured
 - **Primary FDA risk areas:** Viral manufacturing safety, shedding, durability, pediatric extrapolation, and the limitations of a small single-arm study.
 - **Evidence-map focus:** Surgery-free response as a clinical endpoint, baseline surgical burden, retreatment, immune correlates, and the postmarketing shedding and pediatric studies.
 
+## Phase-based breakdown of the initial landscape
+
+The phase label alone is not a sufficient measure of evidence strength. The public BLA records show that “Phase 3” can mean a randomized controlled trial, an intra-subject controlled trial, or a single-arm study benchmarked against natural history. The phase map should therefore preserve both the nominal phase and the actual design, comparator, sample size, and endpoint maturity.
+
+### CASGEVY: integrated Phase 1/2/3 plus long-term rollover
+
+- **Early evidence:** A single-arm Phase 1/2/3 program established feasibility, editing, fetal-hemoglobin induction, and transfusion-independence outcomes.
+- **Registration evidence:** Study 111 supplied the primary BLA efficacy and safety evidence; the beta-thalassemia review used 35 of 52 treated subjects for the primary efficacy set and all 52 for safety.[1]
+- **Long-term evidence:** Study 131 is a rollover study intended to follow treated subjects for 15 years. In the reviewed dataset, subjects who rolled over had maintained transfusion independence.[1]
+- **Key limitation:** The pivotal evidence is not a conventional randomized Phase 3 trial. The major unresolved question is whether the relatively small clinical exposure can adequately characterize rare, delayed off-target-editing or malignancy risks.
+
+### Phase 1 + Phase 3 programs
+
+#### LUXTURNA
+
+- **Phase 1:** Studies 101 and 102 were open-label supportive studies, including dose escalation and treatment of the contralateral eye.
+- **Phase 3:** Study 301 was an open-label randomized controlled trial with 31 randomized subjects; 21 received treatment and 10 served as controls. The primary endpoint was the one-year change in multi-luminance mobility testing.[6]
+- **Evidence pattern:** Strongest clinical design in this initial direct-administration set, but with a small sample and a procedure-dependent ocular safety profile.
+
+#### ZOLGENSMA
+
+- **Phase 1:** An open-label, single-arm, dose-ascending study in 15 infants provided preliminary efficacy and safety, although the administered dose in the original clinical lot was later found to be uncertain because of assay issues.
+- **Phase 3:** An ongoing open-label, single-arm study enrolled 21 infants and used available natural-history data as the comparator. At the review cutoff, survival and sitting without support were the key outcomes.[2]
+- **Evidence pattern:** Clinically meaningful outcomes with a natural-history comparator, but dose comparability and the absence of a concurrent randomized control are important limitations.
+
+### Phase 1/2 plus Phase 3 programs
+
+#### VYJUVEK
+
+- **Phase 1/2:** Study KB103-001 was first-in-human and explored route, dose, and dosing frequency. Its key contribution was pharmacodynamic evidence: COL7 transgene expression, secretion, and localization in skin biopsies. Its exploratory efficacy results were not pooled with Phase 3 because dosing differed.[13]
+- **Phase 3:** Study B-VEC-03 was multicenter, intra-subject randomized, placebo-controlled, and double-blind, with a 26-week treatment period. It supplied the primary evidence of effectiveness.[13]
+- **Additional evidence:** A small open-label study supported safety in infants aged 6 months to less than 12 months.
+- **Evidence pattern:** A useful example of mechanistic Phase 1/2 evidence being used as confirmation while the Phase 3 study carries the clinical efficacy claim.
+
+#### ROCTAVIAN
+
+- **Phase 1/2:** Study 270-201 supplied dose-escalation and proof-of-concept evidence.
+- **Phase 3:** Study 270-301 was the licensing trial and used annualized bleeding rate as the clinically meaningful endpoint. The original BLA did not establish sufficient effectiveness on its initial surrogate strategy and received a complete response letter before resubmission.[8]
+- **Evidence pattern:** Demonstrates how FDA can require a shift from a biomarker or surrogate rationale to a clinically meaningful endpoint before approval.
+
+#### BEQVEZ
+
+- **Phase 1/2a:** The completed study supplied additional safety and proof-of-concept efficacy.
+- **Phase 3:** The pivotal trial enrolled 45 adults. The primary analysis tested non-inferiority of annualized bleeding rate versus routine factor IX prophylaxis; Factor IX activity was supportive.[3]
+- **Evidence pattern:** A relatively direct efficacy bridge from pharmacodynamic expression to a clinical bleeding endpoint, with hepatotoxicity and corticosteroid use as important interpretive issues.
+
+#### HEMGENIX
+
+- **Phase 2b:** The earlier study established initial safety, Factor IX expression, and bleeding control.
+- **Phase 3:** The pivotal study supplied the primary evidence for reduction in annualized bleeding rate and increased Factor IX activity.[7]
+- **Evidence pattern:** FDA relied on a single adequate and well-controlled investigation supported by the earlier Phase 2b study and preclinical evidence.
+
+### Phase 1/2 plus randomized Phase 3, with biomarker-supported approval
+
+#### ELEVIDYS
+
+- **Early studies:** Studies 101 and 102, together with the uncontrolled Study 103, supplied early clinical and micro-dystrophin evidence.
+- **Phase 3:** Study 301 was a randomized, double-blind, placebo-controlled trial of 125 boys. Its primary NSAA endpoint did not reach statistical significance, but timed-function secondary endpoints were positive.[9]
+- **Post-Phase 3 interpretation:** FDA used the totality of the evidence—secondary functional outcomes, micro-dystrophin expression, earlier studies, and mechanism—to support traditional approval for ambulatory patients and accelerated approval for non-ambulatory patients.
+- **Evidence pattern:** Important example of a Phase 3 trial with a failed primary endpoint where the regulatory conclusion turned on endpoint hierarchy, clinical meaningfulness of secondary endpoints, biomarker–outcome correlation, and unmet need.
+
+### Phase 3 primary evidence without a clear Phase 1/2 registration role
+
+#### ADSTILADRIN
+
+- **Phase 3:** Study CS-003 was a multicenter, single-arm Phase 3 study and formed the basis of the safety and efficacy assessment.[10]
+- **Evidence pattern:** The public review emphasizes complete response and duration of response, with no concurrent randomized control in the pivotal registration study. The evidence map should capture cystoscopy/biopsy confirmation, recurrence, salvage treatment, and the interpretation of response durability.
+
+### Phase 1/2 evidence without a public Phase 3 dataset in the reviewed record
+
+#### PAPZIMEOS
+
+- **Phase 1/2:** Study PRGN-2012-201 was a single-arm study in adults with recurrent respiratory papillomatosis. The registration evidence was complete response at 12 months and durability through 24 months, supported by HPV-specific T-cell responses.[12]
+- **No Phase 3 dataset identified:** The public FDA review record used for this initial landscape did not identify a separate Phase 3 efficacy dataset.
+- **Evidence pattern:** The application illustrates how a large observed effect, a clinically meaningful surgery-avoidance endpoint, immune correlates, and disease rarity can support traditional approval despite a small single-arm study.
+
+### Postmarketing and long-term data are a separate evidence tier
+
+Across the landscape, the next evidence after the registration package is not simply “more Phase 3.” It often consists of:
+
+- 10- or 15-year safety follow-up for malignancy, delayed toxicity, or durability.
+- Confirmatory trials for accelerated approvals, especially when the approval endpoint is a biomarker or intermediate endpoint.
+- Registries and expanded-access cohorts that broaden exposure but may introduce selection bias.
+- Vector-shedding and environmental monitoring for directly administered vectors.
+- Manufacturing comparability, shipping, stability, and potency data generated after the clinical lots.
+
+These studies should be tagged separately from the registration phase because they answer different questions: registration studies establish initial benefit–risk; long-term and postmarketing studies test durability, rare risks, generalizability, and commercial-product consistency.
+
 ## Cross-product hypotheses for Probception
 
 The initial corpus suggests several hypotheses that the agent should test rather than assume:
@@ -257,3 +345,5 @@ The next useful Probception experiment is to compare two applications with simil
 [11] VYJUVEK Basis for Regulatory Action: https://paperclip.gxl.ai/citations/fda/fda_f34cd18007ca#L3-L4,L11,L15-L16,L26-L28
 
 [12] PAPZIMEOS Basis for Regulatory Action: https://paperclip.gxl.ai/citations/fda/fda_4f8d5afa7ea3#L3,L11,L13,L15,L27
+
+[13] VYJUVEK clinical review: https://paperclip.gxl.ai/citations/fda/fda_f34cd18007ca#L15,L100,L103,L105,L110,L112,L116-L118,L120-L121,L152-L159,L168-L172
