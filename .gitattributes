@@ -1,0 +1,25 @@
+# Normalise line endings across the team's Macs, Windows laptops and CI.
+# This is not cosmetic: ledger entry ids are content hashes, so a file that
+# round-trips through CRLF on one machine and LF on another produces different
+# ids for identical content and breaks reproducibility.
+* text=auto eol=lf
+
+# Ledger and report artifacts must stay byte-identical everywhere.
+*.jsonl text eol=lf
+*.py    text eol=lf
+*.md    text eol=lf
+*.toml  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.sh    text eol=lf
+*.ps1   text eol=crlf
+
+# Binary / scientific data: never touch these.
+*.png   binary
+*.jpg   binary
+*.pdf   binary
+*.h5    binary
+*.pt    binary
+*.ckpt  binary
+*.npz   binary
+*.pkl   binary
