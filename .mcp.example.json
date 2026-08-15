@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "probception-paperclip": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "scripts/paperclip_mcp.py"
+      ],
+      "env": {
+        "PAPERCLIP_API_KEY": "${PAPERCLIP_API_KEY}"
+      }
+    },
+    "paperclip-hosted": {
+      "type": "http",
+      "url": "https://paperclip.gxl.ai/mcp",
+      "headers": {
+        "X-API-Key": "${PAPERCLIP_API_KEY}"
+      }
+    }
+  }
+}
