@@ -23,6 +23,7 @@ from probception import __version__
 from probception.adapters import get_lab, get_searcher
 from probception.agents.llm import Claude
 from probception.agents.scientist import HeuristicScientist, LLMScientist, Scientist
+from probception.clinical import score_asset, write_risk_report
 from probception.config import settings
 from probception.eval.calibration import score_run
 from probception.eval.counterfactual import World, run_counterfactual
@@ -51,7 +52,7 @@ def _pick_scientist(force_heuristic: bool = False) -> Scientist:
     if claude.available:
         return LLMScientist(claude)
     console.print(
-        "[yellow]No ANTHROPIC_API_KEY found — using the deterministic reasoner.[/yellow] "
+        "[yellow]No ANTHROPIC_API_KEY found - using the deterministic reasoner.[/yellow] "
         "The full loop still runs; only hypothesis generation is offline."
     )
     return HeuristicScientist()
@@ -63,7 +64,7 @@ def _belief_table(belief: dict[str, float], title: str) -> Table:
     table.add_column("p", justify="right", width=7)
     table.add_column("", width=22)
     for stmt, p in sorted(belief.items(), key=lambda kv: -kv[1]):
-        bar = "█" * max(int(p * 20), 0)
+        bar = "#" * max(int(p * 20), 0)
         table.add_row(stmt, f"{p:.3f}", f"[cyan]{bar}[/cyan]")
     return table
 
@@ -159,7 +160,7 @@ def ask(
         with console.status(f"[cyan]step {i + 1}: designing and scoring...[/cyan]"):
             winner, scored = loop.propose(n=candidates)
 
-        table = Table(title=f"Step {i + 1} — candidates scored by information gain",
+        table = Table(title=f"Step {i + 1} - candidates scored by information gain",
                       title_justify="left")
         table.add_column("Experiment", overflow="fold")
         table.add_column("EIG", justify="right", width=7)
@@ -172,7 +173,7 @@ def ask(
                 s.experiment.title + mark,
                 f"{s.eig:.3f}",
                 f"{s.experiment.cost:.1f}",
-                f"{s.times_run}x" if s.times_run else "—",
+                f"{s.times_run}x" if s.times_run else "-",
                 f"{s.utility:.3f}",
             )
         console.print(table)
@@ -240,6 +241,44 @@ def ask(
     console.print(f"run id:    [bold]{loop.run_id}[/bold]")
 
 
+@app.command("risk-profile")
+def risk_profile(
+    asset: str = typer.Argument(..., help="Clinical asset, e.g. 'VERVE-102 PCSK9 GalNAc-LNP'."),
+    trial_design: str = typer.Argument(
+        ..., help="Planned trial design: population, phase, dose plan, endpoints."
+    ),
+    output_json: bool = typer.Option(False, "--json", help="Print the full JSON profile."),
+) -> None:
+    """Score an in vivo CRISPR clinical asset for safety, efficacy, and success risk."""
+    profile = score_asset(asset, trial_design)
+    report = write_risk_report(profile, settings.run_dir)
+
+    table = Table(title="Clinical Asset Risk Profile", title_justify="left")
+    table.add_column("Metric")
+    table.add_column("Score", justify="right")
+    table.add_column("Interpretation", overflow="fold")
+    table.add_row("Success", f"{profile.success_score:.1f}", profile.status)
+    table.add_row("Risk", f"{profile.risk_score:.1f}", "lower is better")
+    table.add_row("Safety", f"{profile.safety_score:.1f}", "cell/animal/human weighted")
+    table.add_row("Efficacy", f"{profile.efficacy_score:.1f}", "cell/animal/human weighted")
+    table.add_row("Confidence", f"{profile.confidence:.2f}", "evidence maturity")
+    table.add_row("FDA approval", f"{profile.fda_approval_score:.1f}", "proxy score")
+    table.add_row("Commercial", f"{profile.commercial_success_score:.1f}", "proxy score")
+    console.print(table)
+
+    console.print(
+        Panel(
+            "\n".join(profile.reasoning + ["", "Next data:", *profile.next_data_to_collect[:3]]),
+            title=f"Reasoning: {profile.generated_from}",
+            border_style="cyan",
+        )
+    )
+    console.print(f"report: [cyan]{report}[/cyan]")
+    console.print(f"json:   [cyan]{report.with_name('risk_profile.json')}[/cyan]")
+    if output_json:
+        console.print_json(profile.model_dump_json())
+
+
 @app.command()
 def counterfactual(
     question: str = typer.Option(DEFAULT_QUESTION, help="Question to test."),
@@ -249,7 +288,7 @@ def counterfactual(
     """Run the same agent against contradictory results and diff what it proposes.
 
     This is the closing-the-loop proof. If the agent proposes the same next
-    experiment no matter what the data said, it fails here — loudly.
+    experiment no matter what the data said, it fails here - loudly.
     """
     console.print(
         Panel(
@@ -276,7 +315,7 @@ def counterfactual(
     table.add_column("Leading hypothesis after evidence", overflow="fold")
     table.add_column("Proposes next", overflow="fold")
     for name in result.proposals:
-        table.add_row(name, result.leaders[name], result.proposals[name] or "—")
+        table.add_row(name, result.leaders[name], result.proposals[name] or "-")
     console.print(table)
 
     style = "green" if result.responsive else "red"
@@ -296,11 +335,11 @@ def score(run_id: str = typer.Argument(..., help="Run id to grade.")) -> None:
         console.print(f"[red]No ledger found for run {run_id}[/red]")
         raise typer.Exit(code=1)
     report = score_run(ledger)
-    console.print(Panel(report.summary(), title=f"Calibration — {run_id}", border_style="cyan"))
+    console.print(Panel(report.summary(), title=f"Calibration - {run_id}", border_style="cyan"))
     if report.n and not report.beats_baseline:
         console.print(
             "[yellow]The agent's probabilities are not beating an uninformed guess. "
-            "That is a real finding — report it rather than tuning until it goes away.[/yellow]"
+            "That is a real finding - report it rather than tuning until it goes away.[/yellow]"
         )
 
 
@@ -328,7 +367,7 @@ def runs() -> None:
     """List runs on this machine."""
     root = Path(settings.run_dir)
     if not root.exists():
-        console.print("no runs yet — try [bold]probception demo[/bold]")
+        console.print("no runs yet - try [bold]probception demo[/bold]")
         return
     table = Table(title="Runs", title_justify="left")
     table.add_column("Run id")
@@ -337,7 +376,7 @@ def runs() -> None:
     for d in sorted(root.iterdir()):
         if (d / "ledger.jsonl").exists():
             n = len(Ledger.load(d.name, str(root)).read())
-            table.add_row(d.name, str(n), "yes" if (d / "report.html").exists() else "—")
+            table.add_row(d.name, str(n), "yes" if (d / "report.html").exists() else "-")
     console.print(table)
 
 

@@ -59,6 +59,19 @@ uv run probception counterfactual
 
 That last command runs **the identical agent against two worlds whose experiments return opposite results**, and diffs what it proposes next. If the agent proposes the same experiment regardless of the data, this command **fails with exit code 1** and says so. That is the test we could most easily have hidden, so we made it the headline demo.
 
+The finalized hackathon vertical is clinical asset derisking for in vivo CRISPR:
+
+```bash
+uv run probception risk-profile "VERVE-102 PCSK9 GalNAc-LNP" \
+  "Phase 1b/2 single ascending dose in HeFH or premature CAD; endpoints: safety, PCSK9, LDL-C"
+```
+
+That produces a deterministic risk profile plus a standalone responsive HTML
+report: safety and efficacy scores across cell, animal, and human evidence;
+confidence; FDA approval proxy; commercial success proxy; and the agent-facing
+reasoning trail. The current comparator set is Casgevy, VERVE-101, VERVE-102,
+and NTLA-2001.
+
 Full setup for macOS, Windows, and Linux: **[docs/SETUP.md](docs/SETUP.md)**
 
 ---
@@ -84,6 +97,9 @@ flowchart LR
     LOOP -.every arrow writes first.-> L[(Hash-chained ledger)]
     L --> I[HTML inspector]
     L --> E[Calibration + counterfactual eval]
+
+    C([Clinical asset + planned trial]) --> RP[Derisk profile<br/><i>deterministic scoring</i>]
+    RP --> RPT([Responsive risk report])
 ```
 
 **The load-bearing design decision:** the LLM proposes, but it never scores and it never updates. Claude generates hypotheses and candidate experiments — the creative work it is genuinely good at. The *selection* of which experiment to run and the *revision* of belief are pure, deterministic, unit-tested arithmetic. That split is why the agent's behaviour is reproducible and why a wrong answer is always traceable to either a bad hypothesis or a bad likelihood, never to an unexaminable vibe.
@@ -93,6 +109,7 @@ flowchart LR
 | Layer | Module | Responsibility | LLM involved? |
 |---|---|---|---|
 | **Evidence** | `adapters/` | Retrieve papers, datasets, trials, assay results as content-addressed `Evidence` | no |
+| **Clinical derisking** | `clinical.py` | Score in vivo CRISPR asset risk from trial evidence and hardcoded rubric | no |
 | **Hypothesis** | `agents/scientist.py` | Turn a question into 3–5 competing falsifiable claims with priors | **yes** |
 | **Design** | `agents/scientist.py` | Propose candidate experiments with full `P(outcome \| hypothesis)` tables | **yes** |
 | **Selection** | `design/eig.py` | Compute EIG, rank by information per unit cost, choose | no |
@@ -111,6 +128,7 @@ flowchart LR
 | **Inspectability** — *can the agent reconstruct why it made its decisions?* | Append-only **hash-chained ledger**: every candidate considered (not just the winner), its EIG, its cost, the prediction made *before* the result, the observation, the surprise in bits, and the before/after posterior. Rendered to a zero-dependency HTML inspector. Tampering is detectable. | `probception report <run>`<br>`probception verify <run>` |
 | **Validation** | Predictions are recorded before outcomes arrive, so **Brier score and log score** are computed from the ledger alone against an uninformed baseline. The deterministic reasoner is a built-in **ablation arm**: swap out the LLM and measure how much of the result came from the model versus the Bayesian machinery. | `probception score <run>`<br>`probception ask "..." --offline` |
 | **Creative use of the tools** | Paperclip is an evidence layer whose hits become priors, not a search box. Proto/ESM/Tamarind runs are treated as **experiments with pre-declared outcome thresholds** — recorded in the ledger *before* submission, so goalposts cannot move. Modal is the execution substrate. Claude does hypothesis generation under a strict falsifiability contract with structured outputs and prompt caching. | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) |
+| **Hackathon product focus** | In vivo CRISPR clinical asset derisking: input an asset plus planned trial design; output a risk profile with safety, efficacy, confidence, FDA, and commercial-success scores. Integrations have deterministic fallbacks so the demo survives failed APIs. | `probception risk-profile ...` |
 
 **The claim we are willing to be tested on:** an experiment whose result you can already predict is worth zero bits, no matter how expensive or impressive it looks. Probception will refuse to rank it highly, and the ledger shows exactly why.
 
@@ -143,6 +161,11 @@ Note what happened there: the agent did **not** pick the highest-information exp
 
 **Scientific tooling** — GXL Paperclip (evidence) · Proto (biological design) · Modal (compute) · ESM / Boltz (representations and structure) · Tamarind (hosted jobs) · Benchling (LIMS + MCP) · Phylo/Biomni.
 
+**Fallback stance** — live integrations are optional accelerators. Paperclip SDK,
+Paperclip CLI, hosted MCP, Proto, Modal, Tamarind, and Phylo can all fail without
+taking the demo down; the system falls back to deterministic seed trials, mock
+evidence, or a scripted lab while preserving the failure reason in metadata.
+
 **Deliberately not used** — a vector database, a web framework, or an orchestration library. The ledger is a JSONL file and the inspector is one self-contained HTML page. On hackathon wifi, every dependency is a liability.
 
 Full integration notes, credit redemption, and rate limits: **[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)**
@@ -155,6 +178,7 @@ Full integration notes, credit redemption, and rate limits: **[docs/INTEGRATIONS
 probception/
 ├── src/probception/
 │   ├── types.py            # Every contract, as a Pydantic model
+│   ├── clinical.py         # Clinical asset derisking risk profile
 │   ├── belief/state.py     # Bayes, entropy, surprise — pure and tested
 │   ├── design/eig.py       # Expected information gain, cost-adjusted ranking
 │   ├── agents/
@@ -164,7 +188,7 @@ probception/
 │   ├── trace/              # Hash-chained ledger + standalone HTML inspector
 │   ├── eval/               # Calibration + the counterfactual harness
 │   ├── loop.py             # The closed loop
-│   └── cli.py              # doctor / demo / ask / counterfactual / score / verify
+│   └── cli.py              # doctor / demo / ask / risk-profile / counterfactual / score / verify
 ├── tests/                  # Belief, EIG, ledger integrity, end-to-end loop
 └── docs/                   # Setup, coordination, integrations, architecture, logs
 ```
@@ -178,6 +202,7 @@ probception/
 | `probception doctor` | Check Python, packages, and which credentials are present. **Run this first.** |
 | `probception demo` | Full closed loop on a built-in question. No API key required. |
 | `probception ask "<question>"` | Run the loop on your own question. |
+| `probception risk-profile "<asset>" "<trial design>"` | Produce the in vivo CRISPR clinical asset risk profile and responsive report. |
 | `probception counterfactual` | The closing-the-loop proof. Exits non-zero if the loop is open. |
 | `probception score <run-id>` | Calibration (Brier, log score, top-1) from the ledger alone. |
 | `probception report <run-id>` | Rebuild the standalone HTML inspector. |
@@ -210,6 +235,7 @@ Working agreements, branch conventions, the merge protocol, and the hour-by-hour
 | **[SETUP.md](docs/SETUP.md)** | You are setting up a laptop (macOS / Windows / Linux) |
 | **[COORDINATION.md](docs/COORDINATION.md)** | You want to know who owns what and how we merge |
 | **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** | You want the design rationale and the extension points |
+| **[CLINICAL_DERISKING.md](docs/CLINICAL_DERISKING.md)** | You are working on the in vivo CRISPR risk-profile product |
 | **[INTEGRATIONS.md](docs/INTEGRATIONS.md)** | You are wiring up Paperclip / Proto / Modal / Benchling |
 | **[EXECUTION_LOG.md](docs/EXECUTION_LOG.md)** | You want to know what happened when, and what we decided |
 | **[CHANGELOG.md](CHANGELOG.md)** | You want the shipped-feature history |
@@ -219,9 +245,15 @@ Working agreements, branch conventions, the merge protocol, and the hour-by-hour
 
 ## Status
 
-**Boilerplate complete and running.** The reasoning core, belief math, EIG planner, ledger, inspector, evaluation harness, CLI, and test suite are done and green. The scientific question is deliberately still open — the architecture is domain-agnostic, so the team can choose the biology on Saturday and plug it in without touching the loop.
+**Pre-phase product running.** The reasoning core, belief math, EIG planner,
+ledger, inspector, evaluation harness, clinical derisking workflow, Paperclip MCP
+bridge, deterministic fallbacks, CLI, and test suite are done and green. The
+current product input is a clinical asset plus planned trial design; the output
+is a renderable risk profile for in vivo CRISPR, focused on LNP delivery.
 
-What is left is the fun part: pick the question, wire the real adapters, and run it.
+What is left is the science-team pass: manually review the clinical asset data,
+replace or defend the seed scoring rubric, then generate and validate the Claude
+skill for Phase 2.
 
 ---
 

@@ -5,6 +5,7 @@ from probception.adapters.base import (
     ExperimentAdapter,
     SearchAdapter,
 )
+from probception.adapters.fallback import ResilientExperimentAdapter, ResilientSearchAdapter
 from probception.adapters.mock import (
     MockExperimentAdapter,
     MockSearchAdapter,
@@ -16,6 +17,8 @@ __all__ = [
     "ExperimentAdapter",
     "MockExperimentAdapter",
     "MockSearchAdapter",
+    "ResilientExperimentAdapter",
+    "ResilientSearchAdapter",
     "ScriptedExperimentAdapter",
     "SearchAdapter",
     "get_searcher",
@@ -30,7 +33,7 @@ def get_searcher(mode: str = "mock") -> SearchAdapter:
 
         adapter = PaperclipAdapter()
         if adapter.available():
-            return adapter
+            return ResilientSearchAdapter(adapter, MockSearchAdapter())
     return MockSearchAdapter()
 
 
@@ -41,5 +44,5 @@ def get_lab(mode: str = "mock", seed: int = 1729) -> ExperimentAdapter:
 
         adapter = ProtoAdapter()
         if adapter.available():
-            return adapter
+            return ResilientExperimentAdapter(adapter, MockExperimentAdapter(seed=seed))
     return MockExperimentAdapter(seed=seed)
