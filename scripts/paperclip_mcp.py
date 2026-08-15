@@ -15,13 +15,23 @@ import shutil
 import subprocess
 import sys
 import urllib.request
+from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
 
-from probception.clinical import TrialRecord, profile_to_json, score_asset, seed_trial_records
-from probception.memory import get_memory_store
-from probception.phase2 import (
+SOURCE_ROOT = Path(__file__).resolve().parents[1] / "src"
+if str(SOURCE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SOURCE_ROOT))
+
+from probception.clinical import (  # noqa: E402
+    TrialRecord,
+    profile_to_json,
+    score_asset,
+    seed_trial_records,
+)
+from probception.memory import get_memory_store  # noqa: E402
+from probception.phase2 import (  # noqa: E402
     build_paper_fetch_plan,
     fetch_strategy_records,
     ingest_phase1_sheet,
