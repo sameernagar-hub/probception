@@ -236,6 +236,7 @@ Working agreements, branch conventions, the merge protocol, and the hour-by-hour
 | **[COORDINATION.md](docs/COORDINATION.md)** | You want to know who owns what and how we merge |
 | **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** | You want the design rationale and the extension points |
 | **[CLINICAL_DERISKING.md](docs/CLINICAL_DERISKING.md)** | You are working on the in vivo CRISPR risk-profile product |
+| **[REGULATORY_EVIDENCE_MAP.md](REGULATORY_EVIDENCE_MAP.md)** | You are mapping FDA benefit-risk evidence for gene-editing applications |
 | **[INTEGRATIONS.md](docs/INTEGRATIONS.md)** | You are wiring up Paperclip / Proto / Modal / Benchling |
 | **[EXECUTION_LOG.md](docs/EXECUTION_LOG.md)** | You want to know what happened when, and what we decided |
 | **[CHANGELOG.md](CHANGELOG.md)** | You want the shipped-feature history |

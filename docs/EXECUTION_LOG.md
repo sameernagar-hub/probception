@@ -15,6 +15,15 @@ so they can be referenced from PRs and from the demo.
 
 ## Day 1 — Saturday, 15 August 2026
 
+### 13:45 · Teammate evidence map fetched and linked · Codex
+
+Fetched new `origin/main` commit `04f98cf`, which added
+`REGULATORY_EVIDENCE_MAP.md`. It is additive and does not conflict with the
+clinical derisking branch. The branch was rebased on top of it, and the README
+plus clinical workflow docs now link to the FDA evidence map.
+
+---
+
 ### 13:35 · Windows CI console encoding fixed · Codex
 
 GitHub Actions passed on Linux and macOS, but Windows failed during
